@@ -1,0 +1,21 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker  build --tag lbrady/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run lbrady/react-test npm test -- --coverage
+
+after_success:
+  - docker  build --tag lbrady/multi-client ./client
+  - docker  build --tag lbrady/multi-server ./server
+  - docker  build --tag lbrady/multi-worker ./worker
+  - docker  build --tag lbrady/multi-nginx ./nginx
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push lbrady/multi-client
+  - docker push lbrady/multi-server
+  - docker push lbrady/multi-worker
+  - docker push lbrady/multi-nginx
