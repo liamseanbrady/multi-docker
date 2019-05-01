@@ -19,3 +19,16 @@ after_success:
   - docker push lbrady/multi-server
   - docker push lbrady/multi-worker
   - docker push lbrady/multi-nginx
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-1"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: $AWS_BUCKET_NAME
+  bucket_path: "docker-multi"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
